@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Астро-Бинго: Луна в Дедлайне ✨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+        body {
+            background: radial-gradient(circle at center, #1a1c2c 0%, #0b0d17 100%);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: #a0a0ff;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .bingo-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 600px;
+            width: 100%;
+            perspective: 1000px;
+        }
+
+        .cell {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            user-select: none;
+        }
+
+        .cell:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .cell.active {
+            background: linear-gradient(135deg, #2a2d5c 0%, #483d8b 100%);
+            border-color: #ffd700;
+            color: #ffd700;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+        .cell.active::after {
+            content: '★';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 1.2rem;
+            color: #ffd700;
+        }
+
+        /* Адаптив для мобилок */
+        @media (max-width: 500px) {
+            .bingo-container {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            .cell {
+                font-size: 0.65rem;
+                padding: 5px;
+                border-radius: 8px;
+            }
+            h1 { font-size: 1.5rem; }
+        }
+
+        /* Модальное окно победы */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.5s;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e2140 0%, #0b0d17 100%);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #ffd700;
+            text-align: center;
+            max-width: 90%;
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .modal h2 {
+            color: #ffd700;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .modal p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .close-btn {
+            background: #ffd700;
+            color: #000;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Конфетти */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: fall linear forwards;
+            z-index: 999;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>✨ АСТРО-БИНГО ✨</h1>
+    <div class="subtitle">Гильдия «Луна в 1С» | Миссия: Закрыть год</div>
+
+    <div class="bingo-container" id="grid">
+        </div>
+
+    <div class="modal" id="winModal">
+        <div class="modal-content">
+            <h2>🎉 БИНГО! 🎉</h2>
+            <p>Ты официально выжил в Декабре!<br>Звезды (и бухгалтерия) тобой гордятся!</p>
+            <button class="close-btn" onclick="closeModal()">УРА!</button>
+        </div>
+    </div>
+
+    <script>
+        const tasks = [
+            "Ментально на Бали 🏝", 
+            "1С зависла 💻", 
+            "Кофе не помогает ☕️", 
+            "Луна в Деве 🌙",
+            "Погладила кота 🐈", 
+            "Подписала акты 📄", 
+            "Дедлайн вчера 🔥", 
+            "Игристое настроение 🥂",
+            "Выжил на корпорате 💃", 
+            "Давайте после праздников 👋", 
+            "Тайный Санта 🎅", 
+            "Купил подарки 🎁",
+            "Нашел ошибку в КП 🧐", 
+            "Клиент оплатил! 💸", 
+            "Мандариновый передоз 🍊", 
+            "Победил Серость ✨"
+        ];
+
+        const grid = document.getElementById('grid');
+        const modal = document.getElementById('winModal');
+        let cells = [];
+
+        tasks.forEach((task, index) => {
+            let cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.innerHTML = task;
+            cell.onclick = () => toggleCell(index);
+            grid.appendChild(cell);
+            cells.push(cell);
+        });
+
+        function toggleCell(index) {
+            cells[index].classList.toggle('active');
+            checkBingo();
+        }
+
+        function checkBingo() {
+            const size = 4;
+            let isBingo = false;
+
+            // Ряды
+            for (let i = 0; i < size; i++) {
+                if (checkLine(i * size, 1, size)) isBingo = true;
+            }
+            // Колонки
+            for (let i = 0; i < size; i++) {
+                if (checkLine(i, size, size)) isBingo = true;
+            }
+            // Диагонали
+            if (checkLine(0, size + 1, size)) isBingo = true;
+            if (checkLine(size - 1, size - 1, size)) isBingo = true;
+
+            if (isBingo) showWin();
+        }
+
+        function checkLine(start, step, count) {
+            for (let i = 0; i < count; i++) {
+                if (!cells[start + i * step].classList.contains('active')) return false;
+            }
+            return true;
+        }
+
+        function showWin() {
+            modal.style.display = 'flex';
+            startConfetti();
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function startConfetti() {
+            for(let i=0; i<50; i++) {
+                let confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+    </script>
+</body>
+</html>
