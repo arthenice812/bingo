@@ -173,3 +173,243 @@
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
             transition: transform 0.2s, box-shadow 0.2s;
             font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .result-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 13, 23, 0.9);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.4s;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--celestial-blue) 0%, var(--celestial-purple) 100%);
+            padding: 40px;
+            border-radius: 30px;
+            border: 3px solid var(--rich-gold);
+            text-align: center;
+            max-width: 90%;
+            width: 450px;
+            box-shadow: 0 0 80px rgba(212, 175, 55, 0.5);
+            position: relative;
+        }
+
+        .modal h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--bright-gold);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        .modal p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            color: var(--text-light);
+        }
+
+        .close-btn {
+            background: var(--rich-gold); color: #0b0d17;
+            border: none; padding: 12px 40px;
+            border-radius: 50px; font-weight: bold;
+            cursor: pointer; font-size: 1rem;
+            transition: transform 0.2s;
+        }
+        .close-btn:hover { transform: scale(1.1); background: var(--bright-gold); }
+
+        /* Адаптив */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .bingo-container { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+            .cell { font-size: 0.65rem; padding: 5px; border-radius: 10px;}
+            .main-wrapper { padding: 25px 10px; border-radius: 20px; }
+            .emoji { font-size: 1.1em !important; }
+        }
+
+        /* Конфетти */
+        .confetti { position: fixed; width: 10px; height: 10px; z-index: 3000; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="stars" id="starContainer"></div>
+
+    <div class="main-wrapper">
+        <h1>✨ АСТРО-БИНГО ✨</h1>
+        <div class="subtitle">Гильдия «Луна в 1С» | Миссия: Выжить в Декабре</div>
+
+        <div class="bingo-container" id="grid">
+            </div>
+
+        <button class="result-btn" onclick="calculateResults()">🔮 Узнать судьбу 🔮</button>
+    </div>
+
+    <div class="modal" id="winModal">
+        <div class="modal-content">
+            <h2 id="modalTitle"></h2>
+            <p id="modalMessage"></p>
+            <button class="close-btn" onclick="closeModal()">КЛАСС!</button>
+        </div>
+    </div>
+
+    <script>
+        // --- ДАННЫЕ ДЛЯ ТЕЛЕГРАМ ---
+        const TG_TOKEN = "8287827338:AAEaIEkNbJuk_6oFR5lEmLCQ0nObVKvpmsg";
+        const TG_CHAT_ID = "7524680591";
+        // ----------------------------
+
+        const tasks = [
+            "Выпил(а) весь кофе в радиусе 1 км ☕",
+            "Посчитал(а) НДС 22% и умер(ла) 💀",
+            "Натворил(а) кринж на корпоративе 🥴",
+            "Поучаствовал(а) в Тайном Санте 🎅",
+            "Не опоздал(а) на ZOOM-собрание 📹",
+            "Устроил(а) марафон Гарри Поттера ⚡",
+            "Луна в Деве оправдала перфекционизм 🌙",
+            "Не выбрал пижаму на корпоратив 🩳",
+            "На вб задерживается доставка... 📦",
+            "Вылетела Мега в день дедлайна 💥",
+            "Разобрал(а) фотки с Острова 🏝️",
+            "Написал(а) «доброе утро» в 15:47 🥱",
+            "Сделал(а) вид, что «завис интернет» 🤐",
+            "Хотел(а) уволиться, но вспомнил про Остров ❤️",
+            "Ответил(а) «сделаем после НГ» и успокоился 🧘",
+            "Нашёл(ла) ошибку в 1С и сделал вид, что так надо 😎"
+        ];
+
+        const grid = document.getElementById('grid');
+        const modal = document.getElementById('winModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const starContainer = document.getElementById('starContainer');
+        let cells = [];
+
+        // Звезды
+        const starColors = ['#ffffff', '#ffd700', '#d4af37', '#e0e0ff', '#B19CD9'];
+        for(let i=0; i<60; i++){
+            let star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.width = Math.random() * 4 + 2 + 'px';
+            star.style.height = star.style.width;
+            star.style.backgroundColor = starColors[Math.floor(Math.random() * starColors.length)];
+            star.style.animationDuration = (Math.random() * 5 + 3) + 's'; 
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starContainer.appendChild(star);
+        }
+
+        // Сетка
+        tasks.forEach((task, index) => {
+            let cell = document.createElement('div');
+            cell.className = 'cell';
+            let lastIndex = task.lastIndexOf(" ");
+            let text = task.substring(0, lastIndex);
+            let emoji = task.substring(lastIndex + 1);
+            cell.innerHTML = `${text}<br><span class="emoji" style="font-size:1.5em; margin-top:5px; display:inline-block;">${emoji}</span>`;
+            cell.onclick = () => toggleCell(index);
+            grid.appendChild(cell);
+            cells.push(cell);
+        });
+
+        function toggleCell(index) {
+            cells[index].classList.toggle('active');
+        }
+
+        function calculateResults() {
+            const total = cells.length;
+            let activeCount = 0;
+            let activeText = [];
+
+            cells.forEach(cell => {
+                if (cell.classList.contains('active')) {
+                    activeCount++;
+                    let cleanText = cell.innerText.replace(/\n/g, " ");
+                    activeText.push(cleanText);
+                }
+            });
+
+            const percentage = Math.round((activeCount / total) * 100);
+            
+            if (activeCount === 0) {
+                alert("Звезды шепчут, что ты ничего не отметил(а)! 😉");
+                return;
+            }
+
+            // Тексты результатов
+            let title = "", message = "";
+            if (percentage === 100) {
+                title = "🪐 КОСМИЧЕСКИЙ АБСОЛЮТ! 🪐";
+                message = "Невероятно! Ты прошел(ла) эту игру на уровне Бог! Звезды в шоке, 1С в восторге. Твоя аура сияет ярче дедлайна!";
+            } else if (percentage >= 75) {
+                title = "🔮 МАГИСТР ХАОСА 🔮";
+                message = "Мощный результат! Ретроградный Меркурий тебя не сломил. Ты управляешь рабочими процессами как настоящий астро-джедай.";
+            } else if (percentage >= 50) {
+                 title = "⭐ ЭКВАТОР ПРОЙДЕН ⭐";
+                 message = "Половина пути позади. Планеты говорят, что ты отлично справляешься. Главное — дышать и верить в чудо!";
+            } else {
+                 title = "🚀 НАЧАЛО ПУТИ 🚀";
+                 message = "Вселенная верит в тебя! Главное — не количество галочек, а твой внутренний свет. Вперед, к звездам!";
+            }
+            modalTitle.innerText = title;
+            modalMessage.innerText = message;
+            showWin();
+
+            // ОТПРАВКА В ТГ
+            sendToTelegram(percentage, activeText);
+        }
+
+        function sendToTelegram(percent, items) {
+            let text = `👾 <b>Кто-то прошел Бинго!</b>\n`;
+            text += `📊 Результат: <b>${percent}%</b>\n\n`;
+            text += `✅ <b>Выбрано:</b>\n- ${items.join('\n- ')}`;
+
+            const url = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TG_CHAT_ID,
+                    text: text,
+                    parse_mode: 'HTML'
+                })
+            }).catch(err => console.log('Ошибка отправки в ТГ:', err));
+        }
+
+        function showWin() {
+            modal.style.display = 'flex';
+            startConfetti();
+        }
+
+        function closeModal() { modal.style.display = 'none'; }
+
+        function startConfetti() {
+            const colors = ['#ffd700', '#ffa500', '#00ced1', '#ffffff', '#B19CD9'];
+            for(let i=0; i<70; i++) {
+                let c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 4000);
+            }
+        }
+    </script>
+</body>
+</html>
