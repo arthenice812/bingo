@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✨ Астро-Бинго: Луна в Дедлайне ✨</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
 
         body {
-            background: radial-gradient(circle at center, #1a1c2c 0%, #0b0d17 100%);
+            /* Магический фон с космосом */
+            background: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5980?ixlib=rb-4.0.3&auto=format&fit=crop&w=2072&q=80') no-repeat center center fixed;
+            background-size: cover;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
             display: flex;
@@ -17,90 +19,120 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px;
-            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Затемнение фона для читаемости */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background: rgba(11, 13, 23, 0.75);
+            z-index: -1;
         }
 
         h1 {
+            font-family: 'Playfair Display', serif;
             color: #ffd700;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 5px #ffd700;
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 2rem;
+            margin-bottom: 5px;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            line-height: 1.2;
         }
 
         .subtitle {
-            color: #a0a0ff;
+            color: #d4d4ff;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 1rem;
+            text-shadow: 0 0 10px rgba(160, 160, 255, 0.5);
+            max-width: 90%;
         }
 
         .bingo-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            max-width: 600px;
+            gap: 10px;
+            max-width: 650px;
             width: 100%;
-            perspective: 1000px;
+            margin-bottom: 30px;
         }
 
         .cell {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: rgba(42, 45, 92, 0.6);
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 215, 0, 0.2);
             border-radius: 12px;
-            padding: 15px;
+            padding: 8px;
             aspect-ratio: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.75rem; /* Чуть меньше шрифт, чтобы влез длинный текст */
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             user-select: none;
+            color: #e0e0ff;
+            line-height: 1.3;
         }
 
         .cell:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px) scale(1.02);
             border-color: #ffd700;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
+        /* Активная клетка */
         .cell.active {
-            background: linear-gradient(135deg, #2a2d5c 0%, #483d8b 100%);
-            border-color: #ffd700;
-            color: #ffd700;
-            font-weight: bold;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.85) 0%, rgba(255, 165, 0, 0.85) 100%);
+            border-color: #fff;
+            color: #0b0d17;
+            font-weight: 700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            transform: scale(1.03);
         }
 
         .cell.active::after {
-            content: '★';
+            content: '✓';
             position: absolute;
-            top: 5px;
+            top: 2px;
             right: 5px;
             font-size: 1.2rem;
-            color: #ffd700;
+            color: #fff;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
         }
 
-        /* Адаптив для мобилок */
-        @media (max-width: 500px) {
-            .bingo-container {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 8px;
-            }
-            .cell {
-                font-size: 0.65rem;
-                padding: 5px;
-                border-radius: 8px;
-            }
-            h1 { font-size: 1.5rem; }
+        /* Кнопка результата */
+        .result-btn {
+            background: linear-gradient(90deg, #ffd700, #ffa500);
+            color: #0b0d17;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
         }
 
-        /* Модальное окно победы */
+        .result-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
+        }
+
+        /* Модальное окно */
         .modal {
             display: none;
             position: fixed;
@@ -108,40 +140,46 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            animation: fadeIn 0.5s;
+            animation: fadeIn 0.4s;
+            backdrop-filter: blur(8px);
         }
 
         .modal-content {
             background: linear-gradient(135deg, #1e2140 0%, #0b0d17 100%);
-            padding: 40px;
-            border-radius: 20px;
+            padding: 30px;
+            border-radius: 25px;
             border: 2px solid #ffd700;
             text-align: center;
-            max-width: 90%;
+            max-width: 85%;
+            width: 400px;
             position: relative;
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.4);
         }
 
         .modal h2 {
+            font-family: 'Playfair Display', serif;
             color: #ffd700;
-            font-size: 2rem;
-            margin-bottom: 20px;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
         }
 
         .modal p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            color: #e0e0ff;
         }
 
         .close-btn {
             background: #ffd700;
-            color: #000;
+            color: #0b0d17;
             border: none;
-            padding: 10px 30px;
+            padding: 12px 40px;
             border-radius: 50px;
             font-weight: bold;
             cursor: pointer;
@@ -149,9 +187,7 @@
             transition: transform 0.2s;
         }
 
-        .close-btn:hover {
-            transform: scale(1.1);
-        }
+        .close-btn:hover { transform: scale(1.1); background: #fff; }
 
         /* Конфетти */
         .confetti {
@@ -160,7 +196,7 @@
             height: 10px;
             background-color: #f00;
             animation: fall linear forwards;
-            z-index: 999;
+            z-index: 2000;
         }
 
         @keyframes fall {
@@ -170,52 +206,75 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
+        /* Адаптив */
+        @media (max-width: 500px) {
+            h1 { font-size: 1.8rem; }
+            .bingo-container { gap: 6px; }
+            .cell { font-size: 0.6rem; padding: 4px; border-radius: 8px; }
+            .cell.active::after { font-size: 0.9rem; }
+            .emoji { font-size: 1.2rem !important; display: block; margin-top: 2px;}
+        }
     </style>
 </head>
 <body>
 
     <h1>✨ АСТРО-БИНГО ✨</h1>
-    <div class="subtitle">Гильдия «Луна в 1С» | Миссия: Закрыть год</div>
+    <div class="subtitle">Гильдия «Луна в 1С» | Миссия: Выжить в Декабре</div>
 
     <div class="bingo-container" id="grid">
         </div>
 
+    <button class="result-btn" onclick="calculateResults()">🔮 Узнать судьбу 🔮</button>
+
     <div class="modal" id="winModal">
         <div class="modal-content">
-            <h2>🎉 БИНГО! 🎉</h2>
-            <p>Ты официально выжил в Декабре!<br>Звезды (и бухгалтерия) тобой гордятся!</p>
-            <button class="close-btn" onclick="closeModal()">УРА!</button>
+            <h2 id="modalTitle">🎉 ПОБЕДА! 🎉</h2>
+            <p id="modalMessage">Текст результата...</p>
+            <button class="close-btn" onclick="closeModal()">КЛАСС!</button>
         </div>
     </div>
 
     <script>
+        // Тексты для клеток (Твои 16 пунктов с эмодзи)
+        // Код автоматически берет последний символ как "большой эмодзи"
         const tasks = [
-            "Ментально на Бали 🏝", 
-            "1С зависла 💻", 
-            "Кофе не помогает ☕️", 
-            "Луна в Деве 🌙",
-            "Погладила кота 🐈", 
-            "Подписала акты 📄", 
-            "Дедлайн вчера 🔥", 
-            "Игристое настроение 🥂",
-            "Выжил на корпорате 💃", 
-            "Давайте после праздников 👋", 
-            "Тайный Санта 🎅", 
-            "Купил подарки 🎁",
-            "Нашел ошибку в КП 🧐", 
-            "Клиент оплатил! 💸", 
-            "Мандариновый передоз 🍊", 
-            "Победил Серость ✨"
+            "Выпил(а) весь кофе в радиусе 1 км ☕",
+            "Посчитал(а) НДС 22% и умер(ла) 💀",
+            "Натворил(а) кринж на корпоративе 🥴",
+            "Поучаствовал(а) в Тайном Санте 🎅",
+            "Не опоздал(а) на ZOOM-собрание 📹",
+            "Устроил(а) марафон Гарри Поттера ⚡",
+            "Луна в Деве официально оправдала мой перфекционизм 🌙",
+            "Не выбрал пижаму на корпоратив (буду в трусах) 🩳",
+            "На вб задерживается доставка... 📦",
+            "Вылетела Мега в день дедлайна 💥",
+            "Разобрал(а) фотки с Острова 🏝️",
+            "Написал(а) «доброе утро» в 15:47 🥱",
+            "Сделал(а) вид, что «завис интернет», чтобы не отвечать 🤐",
+            "Хотел(а) уволиться, но передумал(а), вспомнив про Остров ❤️",
+            "Ответил(а) «сделаем после НГ» и успокоился(ась) 🧘",
+            "Нашёл(ла) ошибку в 1С и сделал(а) вид, что так и задумано 😎"
         ];
 
         const grid = document.getElementById('grid');
         const modal = document.getElementById('winModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
         let cells = [];
 
+        // Генерация сетки
         tasks.forEach((task, index) => {
             let cell = document.createElement('div');
             cell.className = 'cell';
-            cell.innerHTML = task;
+            
+            // Разделяем текст и эмодзи для красивого отображения
+            let lastIndex = task.lastIndexOf(" ");
+            let text = task.substring(0, lastIndex);
+            let emoji = task.substring(lastIndex + 1);
+
+            cell.innerHTML = `${text}<br><span class="emoji" style="font-size:1.4em; margin-top:5px; display:inline-block;">${emoji}</span>`;
+            
             cell.onclick = () => toggleCell(index);
             grid.appendChild(cell);
             cells.push(cell);
@@ -223,33 +282,43 @@
 
         function toggleCell(index) {
             cells[index].classList.toggle('active');
-            checkBingo();
         }
 
-        function checkBingo() {
-            const size = 4;
-            let isBingo = false;
+        // ЛОГИКА РЕЗУЛЬТАТОВ (Гендерно нейтральная + Астро вайб)
+        function calculateResults() {
+            const total = cells.length;
+            let activeCount = 0;
+            cells.forEach(cell => {
+                if (cell.classList.contains('active')) activeCount++;
+            });
 
-            // Ряды
-            for (let i = 0; i < size; i++) {
-                if (checkLine(i * size, 1, size)) isBingo = true;
+            const percentage = Math.round((activeCount / total) * 100);
+            
+            if (activeCount === 0) {
+                alert("Звезды шепчут, что ты ничего не отметил(а)! Не скромничай 😉");
+                return;
             }
-            // Колонки
-            for (let i = 0; i < size; i++) {
-                if (checkLine(i, size, size)) isBingo = true;
-            }
-            // Диагонали
-            if (checkLine(0, size + 1, size)) isBingo = true;
-            if (checkLine(size - 1, size - 1, size)) isBingo = true;
 
-            if (isBingo) showWin();
-        }
+            let title = "";
+            let message = "";
 
-        function checkLine(start, step, count) {
-            for (let i = 0; i < count; i++) {
-                if (!cells[start + i * step].classList.contains('active')) return false;
+            if (percentage === 100) {
+                title = "🪐 КОСМИЧЕСКИЙ АБСОЛЮТ! 🪐";
+                message = "Невероятно! Ты прошел(ла) эту игру на уровне Бог! Звезды в шоке, 1С в восторге. Твоя аура сияет ярче, чем любой дедлайн!";
+            } else if (percentage >= 75) {
+                title = "🔮 МАГИСТР ХАОСА 🔮";
+                message = "Мощный результат! Ретроградный Меркурий тебя не сломил. Ты управляешь рабочими процессами как настоящий астро-джедай.";
+            } else if (percentage >= 50) {
+                 title = "⭐ ЭКВАТОР ПРОЙДЕН ⭐";
+                 message = "Половина пути позади. Планеты выстроились в ряд и говорят, что ты отлично справляешься. Главное — дышать и верить в чудо (и в бэкапы).";
+            } else {
+                 title = "🚀 НАЧАЛО ПУТИ 🚀";
+                 message = "Вселенная верит в тебя! Главное — не количество галочек, а твой внутренний свет. Ну и вовремя сданные акты. Вперед, к звездам!";
             }
-            return true;
+
+            modalTitle.innerText = title;
+            modalMessage.innerText = message;
+            showWin();
         }
 
         function showWin() {
@@ -262,14 +331,15 @@
         }
 
         function startConfetti() {
-            for(let i=0; i<50; i++) {
+            const colors = ['#ffd700', '#ffa500', '#483d8b', '#ffffff', '#00ced1'];
+            for(let i=0; i<60; i++) {
                 let confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 5000);
+                setTimeout(() => confetti.remove(), 4000);
             }
         }
     </script>
