@@ -7,16 +7,26 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
 
+        /* НОВАЯ ПАЛИТРА */
+        :root {
+            --celestial-blue: #1a2654; /* Глубокий синий как на фото */
+            --celestial-purple: #3d2b56; /* Добавленный фиолетовый */
+            --rich-gold: #d4af37; /* Богатое золото */
+            --bright-gold: #ffd700; /* Яркое золото для свечения */
+            --text-light: #e0e0ff;
+        }
+
         body {
-            /* СЮДА МОЖНО ВСТАВИТЬ СВОЮ КАРТИНКУ. Сейчас стоит красивая космическая. */
-            background: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') no-repeat center center fixed;
+            /* СЮДА ВСТАВЛЯЕШЬ СВОЮ КАРТИНКУ (bg.jpg) */
+            /* Пока оставила красивую заглушку в тон */
+            background: url('unnamed.jpg') no-repeat center center fixed;
             background-size: cover;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Центруем по вертикали */
+            justify-content: center;
             min-height: 100vh;
             margin: 0;
             padding: 20px 10px;
@@ -24,41 +34,43 @@
             overflow-x: hidden;
         }
 
-        /* Затемнение фона + синий оттенок */
+        /* Затемнение фона с новым СИНЕ-ФИОЛЕТОВЫМ градиентом */
         body::before {
             content: '';
             position: absolute;
             top: 0; right: 0; bottom: 0; left: 0;
-            background: linear-gradient(180deg, rgba(11, 13, 23, 0.6) 0%, rgba(29, 23, 56, 0.8) 100%);
-            z-index: -1;
+            background: linear-gradient(135deg, rgba(26, 38, 84, 0.85) 0%, rgba(61, 43, 86, 0.9) 100%);
+            z-index: -2; /* Самый нижний слой */
         }
 
-        /* АНИМАЦИЯ: Парящие звезды на фоне */
+        /* АНИМАЦИЯ ЗВЕЗД (Активная) */
         .stars {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
-            z-index: -1;
-            background: transparent;
+            z-index: -1; /* Поверх фона, но под контентом */
         }
         .star {
             position: absolute;
-            background: white;
             border-radius: 50%;
-            opacity: 0.5;
-            animation: float 10s infinite ease-in-out;
+            opacity: 0;
+            animation: activeFloat linear infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0) scale(1); opacity: 0.5; }
-            50% { transform: translateY(-20px) scale(1.5); opacity: 1; }
+        /* Новая анимация: летят снизу вверх через весь экран */
+        @keyframes activeFloat {
+            0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
         }
 
-        /* СТЕКЛЯННЫЙ КОНТЕЙНЕР (Рамка вокруг всего) */
+        /* СТЕКЛЯННЫЙ КОНТЕЙНЕР */
         .main-wrapper {
-            background: rgba(20, 24, 54, 0.4);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(20, 24, 54, 0.5); /* Более темная подложка */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(212, 175, 55, 0.2); /* Золотая рамка */
             border-radius: 30px;
             padding: 40px 20px;
             max-width: 800px;
@@ -66,29 +78,30 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            box-shadow: 0 0 50px rgba(0,0,0,0.6);
         }
 
         h1 {
             font-family: 'Playfair Display', serif;
-            color: #ffd700;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6), 0 0 10px #ffae00;
+            color: var(--bright-gold);
+            /* Богатое золотое свечение */
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.7), 0 0 10px var(--bright-gold);
             text-align: center;
             margin: 0 0 10px 0;
-            font-size: 2.5rem; /* Крупнее */
+            font-size: 2.5rem;
             letter-spacing: 2px;
             line-height: 1.1;
         }
 
         .subtitle {
-            color: #e0e0ff;
+            color: var(--text-light);
             text-align: center;
             margin-bottom: 30px;
             font-size: 1.1rem;
             font-weight: 300;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
             padding-bottom: 10px;
             display: inline-block;
         }
@@ -102,11 +115,11 @@
         }
 
         .cell {
-            background: rgba(255, 255, 255, 0.07); /* Еще прозрачнее */
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(26, 38, 84, 0.5); /* Темно-синяя клетка */
+            border: 1px solid rgba(212, 175, 55, 0.25); /* Золотая рамка */
             border-radius: 15px;
             padding: 10px;
-            aspect-ratio: 1; /* Квадрат */
+            aspect-ratio: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -117,26 +130,26 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             user-select: none;
             color: #fff;
             line-height: 1.3;
         }
 
         .cell:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(61, 43, 86, 0.6); /* Фиолетовый при наведении */
             transform: translateY(-5px);
-            border-color: #ffd700;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            border-color: var(--bright-gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
         }
 
-        /* Активная клетка */
+        /* Активная клетка - ЗОЛОТАЯ */
         .cell.active {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.9) 0%, rgba(255, 140, 0, 0.9) 100%);
+            background: linear-gradient(135deg, var(--rich-gold) 0%, var(--bright-gold) 100%);
             border-color: #fff;
             color: #0b0d17;
             font-weight: 800;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
             transform: scale(1.02);
         }
 
@@ -152,16 +165,15 @@
 
         /* Кнопка результата */
         .result-btn {
-            background: linear-gradient(90deg, #ffd700, #ff8c00);
-            color: #fff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            background: linear-gradient(90deg, var(--rich-gold), var(--bright-gold));
+            color: #0b0d17;
             border: none;
             padding: 18px 50px;
             font-size: 1.2rem;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
             transition: transform 0.2s, box-shadow 0.2s;
             font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
@@ -170,7 +182,7 @@
 
         .result-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
         }
 
         /* Модальное окно */
@@ -178,29 +190,29 @@
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(11, 13, 23, 0.9);
             align-items: center;
             justify-content: center;
             z-index: 2000;
             animation: fadeIn 0.4s;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
         }
 
         .modal-content {
-            background: linear-gradient(135deg, #1e2140 0%, #0b0d17 100%);
+            background: linear-gradient(135deg, var(--celestial-blue) 0%, var(--celestial-purple) 100%);
             padding: 40px;
             border-radius: 30px;
-            border: 2px solid #ffd700;
+            border: 3px solid var(--rich-gold);
             text-align: center;
             max-width: 90%;
             width: 450px;
-            box-shadow: 0 0 80px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 80px rgba(212, 175, 55, 0.5);
             position: relative;
         }
 
         .modal h2 {
             font-family: 'Playfair Display', serif;
-            color: #ffd700;
+            color: var(--bright-gold);
             font-size: 2rem;
             margin-bottom: 15px;
         }
@@ -208,27 +220,25 @@
             font-size: 1.2rem;
             margin-bottom: 30px;
             line-height: 1.5;
-            color: #e0e0ff;
+            color: var(--text-light);
         }
 
         .close-btn {
-            background: #ffd700; color: #0b0d17;
+            background: var(--rich-gold); color: #0b0d17;
             border: none; padding: 12px 40px;
             border-radius: 50px; font-weight: bold;
             cursor: pointer; font-size: 1rem;
             transition: transform 0.2s;
         }
-        .close-btn:hover { transform: scale(1.1); background: #fff; }
+        .close-btn:hover { transform: scale(1.1); background: var(--bright-gold); }
 
         /* Адаптив */
         @media (max-width: 600px) {
             h1 { font-size: 1.8rem; }
-            .bingo-container { grid-template-columns: repeat(3, 1fr); gap: 8px; } /* 3 колонки на телефоне */
-            .cell { font-size: 0.7rem; padding: 5px; }
-            .main-wrapper { padding: 20px 10px; border-radius: 20px; }
-            /* Скрываем 16-ю клетку на телефоне для ровной сетки 3x5 + 1? Нет, лучше 4х4 но мелко */
-             .bingo-container { grid-template-columns: repeat(4, 1fr); }
-             .cell { font-size: 0.6rem; }
+            .bingo-container { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+            .cell { font-size: 0.65rem; padding: 5px; border-radius: 10px;}
+            .main-wrapper { padding: 25px 10px; border-radius: 20px; }
+            .emoji { font-size: 1.1em !important; }
         }
 
         /* Конфетти */
@@ -287,27 +297,29 @@
         const starContainer = document.getElementById('starContainer');
         let cells = [];
 
-        // Создаем звезды
-        for(let i=0; i<30; i++){
+        // Генерация АКТИВНЫХ звезд
+        const starColors = ['#ffffff', '#ffd700', '#d4af37', '#e0e0ff', '#B19CD9'];
+        for(let i=0; i<60; i++){ // Увеличили количество до 60
             let star = document.createElement('div');
             star.className = 'star';
             star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.width = Math.random() * 3 + 'px';
+            star.style.width = Math.random() * 4 + 2 + 'px'; // Чуть крупнее
             star.style.height = star.style.width;
-            star.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            star.style.animationDelay = Math.random() * 5 + 's';
+            star.style.backgroundColor = starColors[Math.floor(Math.random() * starColors.length)];
+            // Скорость: от 3 до 8 секунд (быстрее)
+            star.style.animationDuration = (Math.random() * 5 + 3) + 's'; 
+            star.style.animationDelay = Math.random() * 3 + 's';
             starContainer.appendChild(star);
         }
 
-        // Создаем сетку
+        // Генерация сетки
         tasks.forEach((task, index) => {
             let cell = document.createElement('div');
             cell.className = 'cell';
             let lastIndex = task.lastIndexOf(" ");
             let text = task.substring(0, lastIndex);
             let emoji = task.substring(lastIndex + 1);
-            cell.innerHTML = `${text}<br><span style="font-size:1.5em; margin-top:4px; display:inline-block;">${emoji}</span>`;
+            cell.innerHTML = `${text}<br><span class="emoji" style="font-size:1.5em; margin-top:5px; display:inline-block;">${emoji}</span>`;
             cell.onclick = () => toggleCell(index);
             grid.appendChild(cell);
             cells.push(cell);
@@ -348,8 +360,8 @@
         function closeModal() { modal.style.display = 'none'; }
 
         function startConfetti() {
-            const colors = ['#ffd700', '#ffa500', '#00ced1', '#ffffff'];
-            for(let i=0; i<60; i++) {
+            const colors = ['#ffd700', '#ffa500', '#00ced1', '#ffffff', '#B19CD9'];
+            for(let i=0; i<70; i++) {
                 let c = document.createElement('div');
                 c.className = 'confetti';
                 c.style.left = Math.random() * 100 + 'vw';
