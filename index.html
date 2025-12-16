@@ -7,19 +7,19 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap');
 
-        /* НОВАЯ ПАЛИТРА */
-      :root {
+       /* НОВАЯ ПАЛИТРА */
+        :root {
             --celestial-blue: #1a2654; /* Глубокий синий как на фото */
             --celestial-purple: #3d2b56; /* Добавленный фиолетовый */
             --rich-gold: #d4af37; /* Богатое золото */
             --bright-gold: #ffd700; /* Яркое золото для свечения */
             --text-light: #e0e0ff;
-
         }
 
         body {
-            /* Фон */
-            background: url(unnamed.jpg) no-repeat center center fixed;
+            /* СЮДА ВСТАВЛЯЕШЬ СВОЮ КАРТИНКУ (bg.jpg) */
+            /* Пока оставила красивую заглушку в тон */
+            background: url('https://images.unsplash.com/photo-1465101162946-4377e57745c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80') no-repeat center center fixed;
             background-size: cover;
             color: #fff;
             font-family: 'Montserrat', sans-serif;
@@ -34,21 +34,21 @@
             overflow-x: hidden;
         }
 
-        /* Затемнение фона */
+        /* Затемнение фона с новым СИНЕ-ФИОЛЕТОВЫМ градиентом */
         body::before {
             content: '';
             position: absolute;
             top: 0; right: 0; bottom: 0; left: 0;
             background: linear-gradient(135deg, rgba(26, 38, 84, 0.85) 0%, rgba(61, 43, 86, 0.9) 100%);
-            z-index: -2;
+            z-index: -2; /* Самый нижний слой */
         }
 
-        /* АНИМАЦИЯ ЗВЕЗД */
+        /* АНИМАЦИЯ ЗВЕЗД (Активная) */
         .stars {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
-            z-index: -1;
+            z-index: -1; /* Поверх фона, но под контентом */
         }
         .star {
             position: absolute;
@@ -57,6 +57,7 @@
             animation: activeFloat linear infinite;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
         }
+        /* Новая анимация: летят снизу вверх через весь экран */
         @keyframes activeFloat {
             0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
             10% { opacity: 0.8; }
@@ -66,10 +67,10 @@
 
         /* СТЕКЛЯННЫЙ КОНТЕЙНЕР */
         .main-wrapper {
-            background: rgba(20, 24, 54, 0.5);
+            background: rgba(20, 24, 54, 0.5); /* Более темная подложка */
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 2px solid rgba(212, 175, 55, 0.2);
+            border: 2px solid rgba(212, 175, 55, 0.2); /* Золотая рамка */
             border-radius: 30px;
             padding: 40px 20px;
             max-width: 800px;
@@ -83,6 +84,7 @@
         h1 {
             font-family: 'Playfair Display', serif;
             color: var(--bright-gold);
+            /* Богатое золотое свечение */
             text-shadow: 0 0 20px rgba(212, 175, 55, 0.7), 0 0 10px var(--bright-gold);
             text-align: center;
             margin: 0 0 10px 0;
@@ -113,8 +115,8 @@
         }
 
         .cell {
-            background: rgba(26, 38, 84, 0.5);
-            border: 1px solid rgba(212, 175, 55, 0.25);
+            background: rgba(26, 38, 84, 0.5); /* Темно-синяя клетка */
+            border: 1px solid rgba(212, 175, 55, 0.25); /* Золотая рамка */
             border-radius: 15px;
             padding: 10px;
             aspect-ratio: 1;
@@ -135,13 +137,13 @@
         }
 
         .cell:hover {
-            background: rgba(61, 43, 86, 0.6);
+            background: rgba(61, 43, 86, 0.6); /* Фиолетовый при наведении */
             transform: translateY(-5px);
             border-color: var(--bright-gold);
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
         }
 
-        /* Активная клетка */
+        /* Активная клетка - ЗОЛОТАЯ */
         .cell.active {
             background: linear-gradient(135deg, var(--rich-gold) 0%, var(--bright-gold) 100%);
             border-color: #fff;
